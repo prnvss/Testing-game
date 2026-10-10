@@ -1,0 +1,1 @@
+import{_ as e,n as t}from"./index-9Y5gzHCC.js";var n=e();function r({content:e,children:r}){return(0,n.jsx)(t,{content:e,placement:`above`,focusTrigger:`always`,children:r})}export{r as default};
