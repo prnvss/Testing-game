@@ -127,7 +127,7 @@ export function CaseRunner({clinicalCase: c, seed, onExit, onRetry, onComplete}:
   if (finished) {
     const total = steps.reduce((s, x) => s + (answers[x.key]?.result?.score ?? 0), 0) / steps.length;
     return (
-      <Section variant="section" padding={0} height="100dvh">
+      <Section variant="transparent" padding={0} height="100dvh" style={{background: 'var(--cl-space)'}}>
         <Layout
           height="fill"
           header={header}
@@ -169,7 +169,7 @@ export function CaseRunner({clinicalCase: c, seed, onExit, onRetry, onComplete}:
   }
 
   return (
-    <Section variant="section" padding={0} height="100dvh">
+    <Section variant="transparent" padding={0} height="100dvh" style={{background: 'var(--cl-space)'}}>
       <Layout
         height="fill"
         header={header}

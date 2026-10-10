@@ -627,7 +627,11 @@ export function ScanViewer({
 
   if (scans.length === 0) {
     return (
-      <Card padding={6} height="100%" variant="muted">
+      <Card
+        padding={6}
+        height="100%"
+        variant="muted"
+        style={{background: 'radial-gradient(closest-side, #06070B00 40%, #06070B 100%), url(art/eye-exploded.webp) center / contain no-repeat, #06070B'}}>
         <EmptyState
           title="No imaging acquired yet"
           description="Work through the history first — scans unlock as the examination progresses."
