@@ -23,6 +23,7 @@ import {
   LogOut,
   Orbit,
   ScanEye,
+  ScanSearch,
   Settings,
   Shuffle,
   Sparkles,
@@ -275,10 +276,11 @@ function RailButton({label, icon, isActive, onClick, children}: {label: string; 
 interface Props {
   attempts: Attempt[];
   onStart: (caseId: string) => void;
+  onPractice: () => void;
   onAttemptsChange: (a: Attempt[]) => void;
 }
 
-export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
+export function Dashboard({attempts, onStart, onPractice, onAttemptsChange}: Props) {
   const wide = useWide(1180);
   const medium = useWide(760);
   const [week, setWeek] = useState(0);
@@ -314,7 +316,8 @@ export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
         <Icon icon={Sparkles} size="md" />
       </HStack>
       <RailButton label="Overview" icon={LayoutGrid} onClick={() => pickWeek(0)} />
-      <RailButton label="Eyes" icon={ScanEye} isActive />
+      <RailButton label="Cases" icon={ScanEye} isActive />
+      <RailButton label="Scan practice" icon={ScanSearch} onClick={onPractice} />
       <RailButton label="Random case" icon={Shuffle} onClick={random} />
       <RailButton label="Next week" icon={Orbit} onClick={() => pickWeek((week % 8) + 1)} />
       <VStack gap={1} style={{marginTop: 'auto'}}>
@@ -671,7 +674,10 @@ export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
                     </Text>
                     <Icon icon={Sparkles} size="sm" />
                   </HStack>
-                  <Button label="Random" variant="primary" icon={<Icon icon={Shuffle} />} onClick={random} />
+                  <HStack gap={1}>
+                    <Button label="Scan practice" variant="secondary" icon={<Icon icon={ScanSearch} />} onClick={onPractice} />
+                    <Button label="Random" variant="primary" icon={<Icon icon={Shuffle} />} onClick={random} />
+                  </HStack>
                 </HStack>
               )}
               {stats}

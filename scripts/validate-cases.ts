@@ -1,7 +1,8 @@
 // Sanity checks for case data + marking engine. Run: npx jiti scripts/validate-cases.ts
 import {existsSync} from 'node:fs';
 import {CASES, buildSteps} from '../src/data/cases/index';
-import {markAnnotations, markText} from '../src/lib/marking';
+import {markAnnotations, markDiagnosis, markText} from '../src/lib/marking';
+import {DRILLS} from '../src/data/drills';
 
 let errors = 0;
 const fail = (m: string) => { errors++; console.error('✗', m); };
@@ -32,5 +33,14 @@ for (const c of CASES) {
   const steps = buildSteps(c, 42);
   console.log(`✓ ${c.id.padEnd(10)} ${steps.length} steps, ${c.scans.length} scans`);
 }
+// Scan-practice drills: every annotation task has a diagnosis key, and the textbook answer scores 100%.
+const annotateCount = CASES.reduce((s, c) => s + c.annotate.length, 0);
+if (DRILLS.length !== annotateCount) fail(`drills: ${DRILLS.length} of ${annotateCount} annotation tasks have a diagnosis key`);
+for (const d of DRILLS) {
+  if (markDiagnosis(d.dx, d.dx.label).score !== 1) fail(`drill ${d.id}: its own label doesn't score full marks`);
+  for (const a of d.dx.accept) if (markDiagnosis(d.dx, a).score !== 1) fail(`drill ${d.id}: accept "${a}" doesn't match`);
+  if (markDiagnosis(d.dx, 'no idea sorry').score !== 0) fail(`drill ${d.id}: nonsense scores`);
+}
+console.log(`✓ ${DRILLS.length} scan-practice drills`);
 console.log(errors ? `\n${errors} problem(s)` : '\nAll cases valid');
 process.exit(errors ? 1 : 0);

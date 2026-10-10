@@ -16,6 +16,11 @@ Everything is auto-marked against key words, phrases and processes from the lect
 reference sheets. Marking understands abbreviations (MA, CWS, NPDR, BRAO, RAPD…), UK/US spelling and
 plurals, and won't credit negated terms ("non-ischaemic" doesn't earn the "ischaemic" point).
 
+**Scan practice tab** — tick the weeks you want (e.g. Weeks 1–4), get a random scan from those
+weeks, mark and label the findings, then type the diagnosis. Findings are worth 60% and the
+diagnosis 40% (half marks for the right family, e.g. "retinal artery occlusion" for a BRAO).
+Optional clinical context, a session average and streak, and your week selection is remembered.
+
 Imaging tools: pan/zoom (scroll wheel), fit, brightness/contrast, invert, red-free (green channel),
 1–3 viewport layouts, a series strip, and keyboard shortcuts — `V` pan, `A` arrow, `L` line, `R` box,
 `E` ellipse, `P` freehand, `D` point, `F` fit, `+`/`−` zoom, `I` invert, `G` red-free, `Ctrl+Z` undo,

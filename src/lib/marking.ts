@@ -401,3 +401,22 @@ export function markAnnotations(q: AnnotateQuestion, annotations: Annotation[]):
   const earned = results.reduce((s, r) => s + r.earned, 0);
   return {score: outOf ? Math.min(1, earned / outOf) : 0, earned: Math.min(earned, outOf), outOf, targets: results, stray};
 }
+
+// ---------------------------------------------------------------------------
+// Scan-practice diagnosis
+// ---------------------------------------------------------------------------
+
+export interface DiagnosisResult {
+  score: number; // 1 = correct, 0.5 = right family, 0 = wrong
+  matched?: string;
+}
+
+export function markDiagnosis(dx: {accept: string[]; partial?: string[]}, answer: string): DiagnosisResult {
+  const {norm, words} = prepareAnswer(answer);
+  if (!norm) return {score: 0};
+  const full = dx.accept.find(p => phraseMatches(p, norm, words));
+  if (full) return {score: 1, matched: full};
+  const part = dx.partial?.find(p => phraseMatches(p, norm, words));
+  if (part) return {score: 0.5, matched: part};
+  return {score: 0};
+}

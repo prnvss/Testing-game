@@ -1,16 +1,19 @@
 import {useState} from 'react';
 import {Dashboard} from './components/Dashboard';
 import {CaseRunner} from './components/CaseRunner';
+import {ScanPractice} from './components/ScanPractice';
 import {caseById} from './data/cases';
 import {loadAttempts, saveAttempt, type Attempt} from './lib/progress';
 
-type Route = {name: 'dashboard'} | {name: 'case'; caseId: string; seed: number};
+type Route = {name: 'dashboard'} | {name: 'practice'} | {name: 'case'; caseId: string; seed: number};
 
 export default function App() {
   const [route, setRoute] = useState<Route>({name: 'dashboard'});
   const [attempts, setAttempts] = useState<Attempt[]>(() => loadAttempts());
 
   const start = (caseId: string) => setRoute({name: 'case', caseId, seed: Math.floor(Math.random() * 1e9)});
+
+  if (route.name === 'practice') return <ScanPractice onExit={() => setRoute({name: 'dashboard'})} />;
 
   if (route.name === 'case') {
     const c = caseById(route.caseId);
@@ -29,5 +32,5 @@ export default function App() {
       );
     }
   }
-  return <Dashboard attempts={attempts} onStart={start} onAttemptsChange={setAttempts} />;
+  return <Dashboard attempts={attempts} onStart={start} onPractice={() => setRoute({name: 'practice'})} onAttemptsChange={setAttempts} />;
 }
