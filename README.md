@@ -44,6 +44,8 @@ Progress (best score per case) is saved in your browser.
 
 ## Upload to Hostinger
 
+Easiest: download **`hostinger-upload.zip`** from the repo root, upload it to `public_html` in hPanel File Manager, then right-click → Extract (and delete the zip). The steps below do the same by hand.
+
 The ready-to-upload site is in **`dist/`**. It uses only relative paths, so it works in `public_html`
 or any subfolder.
 

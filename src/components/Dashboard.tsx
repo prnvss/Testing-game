@@ -22,7 +22,6 @@ import {
   LayoutGrid,
   LogOut,
   Orbit,
-  RotateCcw,
   ScanEye,
   Settings,
   Shuffle,
@@ -305,19 +304,19 @@ export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
   };
   const weekInfo = WEEKS[featured.week];
 
-  // ---- Left rail ------------------------------------------------------------
+  // ---- Left rail (icon nav, like the reference) -------------------------------
   const leftRail = (
-    <VStack gap={1} width={220} paddingBlock={4} style={{flexShrink: 0, position: 'sticky', top: 0, height: '100dvh'}}>
-      <HStack gap={1} paddingInline={4} paddingBlockEnd={6} vAlign="center">
-        <Text size="2xl" weight="medium">
+    <VStack gap={1} width={230} paddingBlock={5} style={{flexShrink: 0}}>
+      <HStack gap={1} paddingInline={5} paddingBlockEnd={8} vAlign="center">
+        <Text weight="medium" style={{fontSize: 34, letterSpacing: '-0.02em'}}>
           CaseLab
         </Text>
-        <Icon icon={Sparkles} size="sm" />
+        <Icon icon={Sparkles} size="md" />
       </HStack>
       <RailButton label="Overview" icon={LayoutGrid} onClick={() => pickWeek(0)} />
-      <RailButton label="Cases" icon={ScanEye} isActive />
+      <RailButton label="Eyes" icon={ScanEye} isActive />
       <RailButton label="Random case" icon={Shuffle} onClick={random} />
-      <RailButton label="Orbit weeks" icon={Orbit} onClick={() => pickWeek((week % 8) + 1)} />
+      <RailButton label="Next week" icon={Orbit} onClick={() => pickWeek((week % 8) + 1)} />
       <VStack gap={1} style={{marginTop: 'auto'}}>
         {attempts.length > 0 && (
           <RailButton
@@ -329,29 +328,40 @@ export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
             }}
           />
         )}
-        <RailButton label="Exit" icon={LogOut} onClick={() => pickWeek(0)} />
+        <RailButton label="Worklist" icon={LogOut} onClick={() => document.getElementById('worklist')?.scrollIntoView({behavior: 'smooth'})} />
       </VStack>
     </VStack>
   );
 
-  // ---- Right rail: week selector ("planets") --------------------------------
+  // ---- Right rail: week selector ("planets") ---------------------------------
   const weekRail = (
-    <Stack gap={2} hAlign="center" vAlign="center" paddingBlock={4} width={medium ? 96 : '100%'} direction={medium ? 'vertical' : 'horizontal'} style={medium ? {flexShrink: 0, position: 'sticky', top: 0, height: '100dvh'} : {flexShrink: 0}} wrap="wrap">
-      {WEEKS.map(w => {
+    <Stack
+      gap={medium ? 3 : 2}
+      hAlign="center"
+      vAlign="center"
+      paddingBlock={medium ? 8 : 2}
+      width={medium ? 120 : '100%'}
+      direction={medium ? 'vertical' : 'horizontal'}
+      style={{flexShrink: 0}}
+      wrap="wrap">
+      {WEEKS.map((w, i) => {
         const active = w.week === week;
+        // Gentle arc like the reference's planet column.
+        const nudge = medium ? Math.round(Math.sin((i / (WEEKS.length - 1)) * Math.PI) * -28) : 0;
         return (
           <Tooltip key={w.week} content={w.week ? `Week ${w.week} · ${w.title}` : 'All cases'} placement={medium ? 'start' : 'above'}>
             <IconButton
               label={w.week ? `Week ${w.week}: ${w.title}` : 'All cases'}
               variant="ghost"
               size="lg"
-              icon={<Icon icon={w.icon} size="md" />}
+              icon={<Icon icon={w.icon} size={active ? 'lg' : 'md'} />}
               onClick={() => pickWeek(w.week)}
-              style={
-                active
-                  ? {width: 72, height: 72, borderRadius: 999, background: 'radial-gradient(circle at 35% 30%, var(--cl-plum-strong), var(--cl-plum))', boxShadow: '0 0 40px #8A2B7366'}
-                  : {width: 48, height: 48, borderRadius: 999, color: 'var(--color-text-secondary)'}
-              }
+              style={{
+                transform: `translateX(${nudge}px)`,
+                ...(active
+                  ? {width: 96, height: 96, borderRadius: 999, background: 'radial-gradient(circle at 35% 30%, var(--cl-plum-strong), var(--cl-plum))', boxShadow: '0 0 50px #8A2B7377'}
+                  : {width: 52, height: 52, borderRadius: 999, color: 'var(--color-text-secondary)'}),
+              }}
             />
           </Tooltip>
         );
@@ -359,78 +369,115 @@ export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
     </Stack>
   );
 
-  // ---- Hero -----------------------------------------------------------------
-  const hero = (
-    <Grid columns={wide ? 2 : 1} gap={3} align="end">
-      <VStack gap={0} style={{position: 'relative', minHeight: wide ? 600 : 420}}>
-        <VStack style={{position: 'absolute', inset: '-4% -6% 18% -6%', background: 'var(--cl-hero-glow)', pointerEvents: 'none'}} />
-        <img
-          src="art/eye-section.webp"
-          alt="Cross-section of the human eye"
-          style={{position: 'relative', width: '100%', maxWidth: 640, marginInline: 'auto', display: 'block', filter: 'drop-shadow(0 30px 60px #E8461E33)'}}
-        />
-        <VStack gap={1} style={{position: 'relative', marginTop: wide ? -120 : -60}} paddingInline={2}>
-          <Text weight="bold" style={{fontSize: 'var(--cl-display-size)', lineHeight: 0.9, letterSpacing: '-0.04em'}}>
-            {weekInfo.short}
-          </Text>
-          <Text size="xl" color="secondary">
-            The {ORDINAL[featured.week]} week of the OPTO3011 course · {weekInfo.title}
-          </Text>
-          <Button
-            label={`Open ${featured.patient.name}'s case`}
-            variant="ghost"
-            size="lg"
-            icon={<Icon icon={ScanEye} />}
-            endContent={<Icon icon={ChevronRight} />}
-            onClick={() => onStart(featured.id)}
-            style={{alignSelf: 'flex-start', paddingInline: 0}}
-          />
-        </VStack>
-      </VStack>
-
-      <VStack gap={2}>
-        <VStack gap={0}>
-          <HStack hAlign="between" vAlign="end">
-            <Text type="label" color="secondary">
-              Best score by case
-            </Text>
-            <Text type="supporting">{attempted ? `${attempted} of ${CASES.length} attempted` : 'hover a point · click to feature'}</Text>
-          </HStack>
-          <ScoreArea cases={CASES} best={best} featuredId={featured.id} onPick={setFeaturedId} />
-        </VStack>
-        <HStack gap={2} vAlign="center">
-          <VStack gap={0.5} style={{flex: 1}}>
-            <Text type="label" color="secondary">
-              Your runs · {featured.patient.name}
-            </Text>
-            <RunBars scores={runs} />
-          </VStack>
-        </HStack>
-
-        <Card padding={1.5} style={{background: 'var(--cl-glass)', borderRadius: 999}}>
-          <HStack gap={3} vAlign="center">
-            <Card padding={3} style={{background: 'var(--cl-amber)', borderRadius: 999, border: 'none', boxShadow: '0 10px 30px #F59A4C55'}}>
-              <Text weight="semibold" style={{color: 'var(--cl-amber-ink)'}}>
-                {featured.patient.name}
-              </Text>
-            </Card>
-            <Text size="3xl" weight="semibold" hasTabularNumbers>
-              {featured.patient.age}
-              {featured.patient.sex}
-            </Text>
-            <Text color="secondary">{featured.patient.id}</Text>
-          </HStack>
-        </Card>
-
-        <Card padding={2} style={{background: 'var(--cl-glass)', borderRadius: 32}}>
-          <HStack gap={2} hAlign="around" wrap="wrap">
-            <Ring value={best[featured.id] ?? 0} label={best[featured.id] !== undefined ? pct(best[featured.id]) : '—'} caption="BEST" stroke="#C25AA8" />
-            <Ring value={featured.scans.length / 5} label={String(featured.scans.length)} caption="SCANS" stroke="var(--cl-navy-ring)" />
-            <Ring value={featured.difficulty / 3} label={'●'.repeat(featured.difficulty)} caption="DIFFICULTY" stroke="#9C9FAB" />
-          </HStack>
-        </Card>
-      </VStack>
+  const stats = (
+    <Grid columns={medium ? 4 : 2} gap={2}>
+      <StatTile icon={Hourglass} label="Cases attempted" value={`${attempted}/${CASES.length}`} tone="graphite" />
+      <StatTile icon={Target} label="Average score" value={attempts.length ? pct(avg) : '—'} tone="plum" />
+      <StatTile icon={Waypoints} label="Cases mastered" value={String(mastered)} tone="navy" />
+      <StatTile icon={ScanEye} label="Patient scans" value={String(scanCount)} tone="umber" />
     </Grid>
+  );
+
+  const title = (
+    <VStack gap={1}>
+      <Text weight="bold" style={{fontSize: wide ? 'clamp(80px, 7vw, 132px)' : 72, lineHeight: 0.85, letterSpacing: '-0.05em', textShadow: '0 10px 40px #000a'}}>
+        {weekInfo.short}
+      </Text>
+      <Text color="secondary" style={{fontSize: wide ? 22 : 18}}>
+        The {ORDINAL[featured.week]} Week Of Disease Of The Eye
+      </Text>
+      <Button
+        label={`Open ${featured.patient.name}'s case`}
+        variant="ghost"
+        size="lg"
+        icon={<Icon icon={ScanEye} />}
+        endContent={<Icon icon={ChevronRight} />}
+        onClick={() => onStart(featured.id)}
+        style={{alignSelf: 'flex-start', paddingInline: 0, fontSize: 20, fontWeight: 600}}
+      />
+    </VStack>
+  );
+
+  const charts = (
+    <VStack gap={0}>
+      <ScoreArea cases={CASES} best={best} featuredId={featured.id} onPick={setFeaturedId} />
+      <HStack hAlign="end">
+        <VStack width="78%">
+          <RunBars scores={runs} />
+        </VStack>
+      </HStack>
+    </VStack>
+  );
+
+  const pill = (
+    <Card padding={1.5} style={{background: 'var(--cl-glass)', borderRadius: 40, border: '1px solid #FFFFFF10'}}>
+      <HStack gap={4} vAlign="center">
+        <Card padding={4} style={{background: 'var(--cl-amber)', borderRadius: 32, border: 'none', boxShadow: '0 10px 40px #F59A4C66', minWidth: 170}}>
+          <Text weight="semibold" justify="center" style={{color: '#FFFFFF', fontSize: 20, textShadow: '0 1px 6px #B4541C'}}>
+            {featured.patient.name.split(' ')[0]}
+          </Text>
+        </Card>
+        <Text weight="semibold" hasTabularNumbers style={{fontSize: 'clamp(40px, 4vw, 64px)', lineHeight: 1}}>
+          {featured.patient.age}
+          <Text color="inherit" style={{fontSize: '0.55em'}}>
+            {featured.patient.sex === 'F' ? '♀' : '♂'}
+          </Text>
+        </Text>
+        <Text color="secondary" style={{fontSize: 20, alignSelf: 'flex-start', paddingTop: 18}}>
+          {featured.patient.id}
+        </Text>
+      </HStack>
+    </Card>
+  );
+
+  const rings = (
+    <Card padding={3} style={{background: 'var(--cl-glass)', borderRadius: 40, border: '1px solid #FFFFFF10'}}>
+      <HStack gap={2} hAlign="around" vAlign="center" wrap="wrap">
+        <Ring value={best[featured.id] ?? 0} label={best[featured.id] !== undefined ? pct(best[featured.id]) : '—'} caption="BEST" stroke="#C25AA8" />
+        <Ring value={featured.scans.length / 5} label={String(featured.scans.length)} caption="SCANS" stroke="var(--cl-navy-ring)" />
+        <Ring value={featured.difficulty / 3} label={['', 'Easy', 'Mid', 'Hard'][featured.difficulty]} caption="LEVEL" stroke="#9C9FAB" />
+      </HStack>
+    </Card>
+  );
+
+  const eye = (
+    <>
+      <VStack style={{position: 'absolute', inset: '-10% -12%', background: 'var(--cl-hero-glow)', pointerEvents: 'none'}} />
+      <img
+        src="art/eye-section.webp"
+        alt="Cross-section of the human eye"
+        style={{position: 'relative', width: '100%', display: 'block', filter: 'drop-shadow(0 0 60px #E8461E44) saturate(1.1)'}}
+      />
+      <EyeMesh />
+    </>
+  );
+
+  // ---- Hero: one framed screen like the reference ---------------------------
+  const hero = wide ? (
+    <VStack gap={0} style={{position: 'relative', flex: 1, minHeight: 640}}>
+      <VStack style={{position: 'absolute', left: '5%', top: '-6%', width: '54%', zIndex: 0}}>{eye}</VStack>
+      <VStack style={{position: 'absolute', left: '10%', bottom: '3%', zIndex: 2}}>{title}</VStack>
+      <VStack style={{position: 'absolute', right: '2%', top: '3%', width: '42%', zIndex: 1}}>{charts}</VStack>
+      <VStack style={{position: 'absolute', right: '2%', bottom: '25%', width: '44%', zIndex: 3}}>{pill}</VStack>
+      <VStack style={{position: 'absolute', right: '2%', bottom: '0%', width: '44%', zIndex: 3}}>{rings}</VStack>
+    </VStack>
+  ) : (
+    <VStack gap={3}>
+      <VStack style={{position: 'relative', maxWidth: 520, alignSelf: 'center', width: '100%'}}>{eye}</VStack>
+      <VStack style={{marginTop: -70, position: 'relative'}}>{title}</VStack>
+      {charts}
+      {pill}
+      {rings}
+    </VStack>
+  );
+
+  const footerNote = (
+    <VStack gap={0.5} hAlign="end">
+      <Text color="secondary" style={{fontSize: 20}}>
+        {CASES.length} Cases · Weeks 1–8
+      </Text>
+      <Button label="Random case" variant="ghost" endContent={<Icon icon={ChevronRight} />} onClick={random} style={{paddingInline: 0, fontSize: 20, fontWeight: 600}} />
+    </VStack>
   );
 
   // ---- Destinations ---------------------------------------------------------
@@ -601,35 +648,52 @@ export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
     </Card>
   );
 
-  const stats = (
-    <Grid columns={medium ? 4 : 2} gap={2}>
-      <StatTile icon={Hourglass} label="Cases attempted" value={`${attempted}/${CASES.length}`} tone="graphite" />
-      <StatTile icon={Target} label="Average score" value={attempts.length ? pct(avg) : '—'} tone="plum" />
-      <StatTile icon={Waypoints} label="Cases mastered" value={String(mastered)} tone="navy" />
-      <StatTile icon={ScanEye} label="Patient scans" value={String(scanCount)} tone="umber" />
-    </Grid>
-  );
-
   return (
-    <Section variant="transparent" padding={0} minHeight="100dvh" style={{background: 'var(--cl-space)', backgroundAttachment: 'fixed', overflowX: 'clip'}}>
-      <HStack gap={0} vAlign="stretch" minHeight="100dvh">
-        {wide && leftRail}
-        <VStack gap={5} padding={medium ? 4 : 2} style={{flex: 1, minWidth: 0}}>
-          {!wide && (
-            <HStack hAlign="between" vAlign="center">
-              <HStack gap={1} vAlign="center">
-                <Text size="2xl" weight="medium">
-                  CaseLab
-                </Text>
-                <Icon icon={Sparkles} size="sm" />
-              </HStack>
-              <Button label="Random" variant="primary" icon={<Icon icon={Shuffle} />} onClick={random} />
-            </HStack>
-          )}
-          {stats}
-          {!medium && weekRail}
-          {hero}
-          <Grid columns={wide ? 2 : 1} gap={4} align="start">
+    <Section
+      variant="transparent"
+      padding={0}
+      minHeight="100dvh"
+      style={{background: 'radial-gradient(70% 60% at 0% 20%, #C9847C 0%, transparent 70%), radial-gradient(60% 60% at 40% 0%, #D8C3CB 0%, transparent 70%), radial-gradient(70% 70% at 100% 50%, #6E6876 0%, transparent 70%), radial-gradient(60% 60% at 30% 100%, #B9706C 0%, transparent 70%), #9D8C93', overflowX: 'clip'}}>
+      <VStack gap={medium ? 6 : 3} padding={medium ? 8 : 1.5} hAlign="center">
+        <Card
+          padding={0}
+          width="100%"
+          maxWidth={1760}
+          style={{background: 'var(--cl-space)', borderRadius: medium ? 48 : 28, border: 'none', boxShadow: '0 40px 120px #2a0e1555', overflow: 'hidden'}}>
+          <HStack gap={0} vAlign="stretch" style={{minHeight: wide ? 'min(1000px, calc(100dvh - 128px))' : undefined}}>
+            {wide && leftRail}
+            <VStack gap={4} padding={medium ? 5 : 2} style={{flex: 1, minWidth: 0}}>
+              {!wide && (
+                <HStack hAlign="between" vAlign="center">
+                  <HStack gap={1} vAlign="center">
+                    <Text size="2xl" weight="medium">
+                      CaseLab
+                    </Text>
+                    <Icon icon={Sparkles} size="sm" />
+                  </HStack>
+                  <Button label="Random" variant="primary" icon={<Icon icon={Shuffle} />} onClick={random} />
+                </HStack>
+              )}
+              {stats}
+              {!medium && weekRail}
+              {hero}
+            </VStack>
+            {medium && (
+              <VStack gap={0} paddingBlockEnd={6} paddingInlineEnd={6} hAlign="end" style={{flexShrink: 0}}>
+                {weekRail}
+                <VStack style={{marginTop: 'auto'}}>{footerNote}</VStack>
+              </VStack>
+            )}
+          </HStack>
+        </Card>
+
+        <Card
+          id="worklist"
+          padding={medium ? 6 : 2}
+          width="100%"
+          maxWidth={1760}
+          style={{background: 'var(--cl-space)', borderRadius: medium ? 48 : 28, border: 'none', boxShadow: '0 40px 120px #2a0e1555'}}>
+          <Grid columns={wide ? 2 : 1} gap={5} align="start">
             {destinations}
             <VStack gap={3} style={{minWidth: 0}}>
               {ticket}
@@ -637,24 +701,39 @@ export function Dashboard({attempts, onStart, onAttemptsChange}: Props) {
               {inspired}
             </VStack>
           </Grid>
-          <HStack hAlign="between" wrap="wrap" gap={2}>
-            <Text type="supporting">Version 2.0 · OPTO3011 Weeks 1–8</Text>
-            {attempts.length > 0 && !wide && (
-              <Button
-                label="Reset progress"
-                variant="ghost"
-                size="sm"
-                icon={<Icon icon={RotateCcw} />}
-                onClick={() => {
-                  clearAttempts();
-                  onAttemptsChange([]);
-                }}
-              />
-            )}
-          </HStack>
-        </VStack>
-        {medium && weekRail}
-      </HStack>
+        </Card>
+      </VStack>
     </Section>
+  );
+}
+
+/** Faint triangulated wireframe over the eye, echoing the reference's mesh overlay. */
+function EyeMesh() {
+  const pts: Array<[number, number]> = [
+    [34, 8], [46, 6], [58, 9], [41, 16], [53, 18], [30, 24], [45, 27], [37, 34], [50, 36], [28, 42],
+    [42, 46], [33, 54], [46, 57], [26, 63], [38, 66], [31, 74], [44, 76], [36, 84], [47, 88],
+  ];
+  const tris: Array<[number, number, number]> = [
+    [0, 1, 3], [1, 2, 4], [1, 3, 4], [0, 3, 5], [3, 4, 6], [3, 5, 6], [5, 6, 7], [6, 7, 8], [5, 7, 9],
+    [7, 8, 10], [7, 9, 10], [9, 10, 11], [10, 11, 12], [9, 11, 13], [11, 12, 14], [11, 13, 14], [13, 14, 15],
+    [14, 15, 16], [15, 16, 17], [16, 17, 18], [12, 14, 16],
+  ];
+  const m = (p: [number, number]) => `${22 + p[0] * 0.75},${18 + p[1] * 0.78}`;
+  return (
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden style={{position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', mixBlendMode: 'screen'}}>
+      {tris.map(([a, b, c], i) => (
+        <polygon
+          key={i}
+          points={`${m(pts[a])} ${m(pts[b])} ${m(pts[c])}`}
+          fill="#FFFFFF08"
+          stroke="#FFE9E2"
+          strokeOpacity={0.55}
+          strokeWidth={0.18}
+        />
+      ))}
+      {pts.map((p, i) => (
+        <circle key={i} cx={22 + p[0] * 0.75} cy={18 + p[1] * 0.78} r={0.35} fill="#FFF3EE" opacity={0.8} />
+      ))}
+    </svg>
   );
 }
