@@ -17,6 +17,7 @@ import {
   Dna,
   Droplet,
   Focus,
+  Glasses,
   Hourglass,
   Layers,
   LayoutGrid,
@@ -277,10 +278,11 @@ interface Props {
   attempts: Attempt[];
   onStart: (caseId: string) => void;
   onPractice: () => void;
+  onOsce: () => void;
   onAttemptsChange: (a: Attempt[]) => void;
 }
 
-export function Dashboard({attempts, onStart, onPractice, onAttemptsChange}: Props) {
+export function Dashboard({attempts, onStart, onPractice, onOsce, onAttemptsChange}: Props) {
   const wide = useWide(1180);
   const medium = useWide(760);
   const [week, setWeek] = useState(0);
@@ -318,6 +320,7 @@ export function Dashboard({attempts, onStart, onPractice, onAttemptsChange}: Pro
       <RailButton label="Overview" icon={LayoutGrid} onClick={() => pickWeek(0)} />
       <RailButton label="Cases" icon={ScanEye} isActive />
       <RailButton label="Scan practice" icon={ScanSearch} onClick={onPractice} />
+      <RailButton label="OSCE clinic" icon={Glasses} onClick={onOsce} />
       <RailButton label="Random case" icon={Shuffle} onClick={random} />
       <RailButton label="Next week" icon={Orbit} onClick={() => pickWeek((week % 8) + 1)} />
       <VStack gap={1} style={{marginTop: 'auto'}}>
@@ -676,6 +679,7 @@ export function Dashboard({attempts, onStart, onPractice, onAttemptsChange}: Pro
                   </HStack>
                   <HStack gap={1}>
                     <Button label="Scan practice" variant="secondary" icon={<Icon icon={ScanSearch} />} onClick={onPractice} />
+                    <Button label="OSCE" variant="secondary" icon={<Icon icon={Glasses} />} onClick={onOsce} />
                     <Button label="Random" variant="primary" icon={<Icon icon={Shuffle} />} onClick={random} />
                   </HStack>
                 </HStack>

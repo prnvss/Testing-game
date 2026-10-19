@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "validate": "jiti scripts/validate-cases.ts"
+    "validate": "jiti scripts/validate-cases.ts",
+    "build:offline": "tsc -b && vite build -c vite.offline.config.ts"
   },
   "dependencies": {
     "@astryxdesign/cli": "^0.6.7",

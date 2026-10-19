@@ -1,0 +1,15 @@
+/* Bundled copies of the Gothic theme's web fonts (SIL Open Font License) so the offline build needs no internet. */
+@font-face {
+  font-family: 'Fustat';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./fustat-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./jetbrains-mono-latin.woff2') format('woff2');
+}

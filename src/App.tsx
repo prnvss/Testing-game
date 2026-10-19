@@ -2,10 +2,11 @@ import {useState} from 'react';
 import {Dashboard} from './components/Dashboard';
 import {CaseRunner} from './components/CaseRunner';
 import {ScanPractice} from './components/ScanPractice';
+import {OsceApp} from './osce/OsceApp';
 import {caseById} from './data/cases';
 import {loadAttempts, saveAttempt, type Attempt} from './lib/progress';
 
-type Route = {name: 'dashboard'} | {name: 'practice'} | {name: 'case'; caseId: string; seed: number};
+type Route = {name: 'dashboard'} | {name: 'practice'} | {name: 'osce'} | {name: 'case'; caseId: string; seed: number};
 
 export default function App() {
   const [route, setRoute] = useState<Route>({name: 'dashboard'});
@@ -14,6 +15,7 @@ export default function App() {
   const start = (caseId: string) => setRoute({name: 'case', caseId, seed: Math.floor(Math.random() * 1e9)});
 
   if (route.name === 'practice') return <ScanPractice onExit={() => setRoute({name: 'dashboard'})} />;
+  if (route.name === 'osce') return <OsceApp onBack={() => setRoute({name: 'dashboard'})} />;
 
   if (route.name === 'case') {
     const c = caseById(route.caseId);
@@ -32,5 +34,5 @@ export default function App() {
       );
     }
   }
-  return <Dashboard attempts={attempts} onStart={start} onPractice={() => setRoute({name: 'practice'})} onAttemptsChange={setAttempts} />;
+  return <Dashboard attempts={attempts} onStart={start} onPractice={() => setRoute({name: 'practice'})} onOsce={() => setRoute({name: 'osce'})} onAttemptsChange={setAttempts} />;
 }

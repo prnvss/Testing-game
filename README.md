@@ -47,6 +47,36 @@ Progress (best score per case) is saved in your browser.
 | 7 | Sienna Morales | Papilloedema / IIH vs disc drusen |
 | 8 | Nuru Abara (Tutorial 8) | POAG |
 
+## OSCE Clinic (OPTO3009 Clinical Skills 3) — works offline
+
+**Offline:** open **`offline/OSCE-Clinic.html`** — one self-contained file (scripts, styles and fonts inlined). Double-click it,
+or copy it to a laptop/phone; no internet or server needed. It is also reachable from the CaseLab dashboard (“OSCE clinic”).
+
+Simulated OSCEs based on the Binocular Vision and Colour Vision assessment rubrics:
+
+- **Binocular Vision station** (/30) — the assessor picks one test per category; you choose the variant:
+  Accuracy of accommodation (MEM / NOTT), monocular AoA (push-up / minus lens), PRA/NRA · BAF / MAF ±2.00 D,
+  cover test with prism neutralisation, NPC · horizontal phoria (Von Graefe / Maddox rod), PFV/NFV (phoropter / prism bar).
+- **Colour Vision station** (/30) — two of Ishihara (24-plate), HRR 4th ed., Farnsworth D-15, Lanthony desaturated D-15,
+  Medmont C-100 and City University; then interpret a *different* patient’s provided results for the same two tests.
+
+Each test: **1 · Instructions** (pick what you’d say — the patient follows them literally) → **2 · Set up** (correction, target,
+distance, lighting, occlusion, test care) → **3 · Perform & record** on an interactive simulator (retinoscopy reflex,
+phoropter with Risley prisms, cover test with prism bar, NPC stick, flippers with a 60 s timer, Maddox rod, dot plates,
+D-15 caps plotted on the score sheet, C-100 dial) with a randomly generated patient whose hidden findings drive their
+responses. Record findings on the recording sheet and interpret them. 8-minute timer with a one-minute warning (or untimed),
+marking against the rubric rows, red flags, model record entries and the patient’s full hidden profile at the end.
+
+Norms: Morgan / Haynes (from the WheezyE/optometry norms sheet), Hofstetter, Scheiman et al. 2003 (NPC) and
+Zellers et al. (facility). C-100 cut-offs (≈ −2…+2 normal, protan negative, deutan positive) follow common course notes —
+check them against your clinic’s protocol.
+
+```bash
+npm run build:offline   # rebuild offline/OSCE-Clinic.html
+```
+
+Code: `src/osce/` (`bv/`, `cv/` test modules, `patient.ts` patient generator, `marking.ts`, `StationRunner.tsx`).
+
 ## Upload to Hostinger
 
 Easiest: download **`hostinger-upload.zip`** from the repo root, upload it to `public_html` in hPanel File Manager, then right-click → Extract (and delete the zip). The steps below do the same by hand.
