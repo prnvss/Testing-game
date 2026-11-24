@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quiz Saver</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Quiz Saver</h1>
+    <p class="muted">Open the <b>review</b> screen of a finished Medify test or question set (the one showing your answers, the correct answers and explanations).</p>
+  </header>
+
+  <label class="field">
+    <span>Quiz name</span>
+    <input id="name" type="text" placeholder="e.g. GAMSAT S3 Mock 2">
+  </label>
+
+  <button id="auto" class="primary">Save every question (auto-clicks Next)</button>
+  <p class="muted small">Go to question 1 first. Keep this popup open until it finishes — clicking elsewhere closes it and stops the run (what was saved so far is kept).</p>
+  <div class="row">
+    <button id="save">Save this page only</button>
+    <button id="stop" hidden>Stop</button>
+  </div>
+
+  <label class="check"><input id="perm" type="checkbox"> Save diagrams/images for offline use and read embedded frames (asks for permission once — recommended)</label>
+  <label class="check"><input id="mhtml" type="checkbox"> Also save an exact .mhtml snapshot when using “Save this page only”</label>
+
+  <p id="status" class="status" role="status"></p>
+
+  <section id="pages-box" hidden>
+    <h2>In this quiz</h2>
+    <p id="totals"></p>
+    <ul id="pages"></ul>
+    <div class="row">
+      <button id="redownload">Download files again</button>
+      <button id="reset" class="danger">Start a new quiz</button>
+    </div>
+  </section>
+
+  <footer class="muted small">Files go to <code>Downloads/QuizSaver/&lt;quiz name&gt;/</code>. Open <b>quiz-practice.html</b> on any device to review or re-take the quiz offline.</footer>
+
+  <script src="exporters.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
